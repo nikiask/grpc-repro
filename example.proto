@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+service Example {
+  rpc Hello(Foo) returns (stream Bar) {}
+}
+
+message Foo {
+  string a = 1;
+}
+
+message Bar {
+  string b = 1;
+}
