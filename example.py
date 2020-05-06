@@ -1,6 +1,7 @@
 import logging
 import time
 from concurrent import futures
+import threading
 
 import grpc
 
@@ -15,15 +16,17 @@ import example_pb2_grpc as ex_grpc
 class ExampleServicer(ex_grpc.ExampleServicer):
     def Hello(self, request, context: grpc.ServicerContext):
         i = 0
-        while context.is_active():
-            time.sleep(0.5)
-            bar = ex_pb.Bar()
-            bar.b = f"bar - {i}"
-            print(f"yielding {i}")
-            yield bar
-            print(f"yielded {i}")
-            i += 1
-        print("exiting")
+        try:
+            while context.is_active():
+                time.sleep(0.5)
+                bar = ex_pb.Bar()
+                bar.b = f"bar - {i}"
+                print(f"yielding {i}")
+                yield bar
+                print(f"yielded {i}")
+                i += 1
+        finally:
+            print("exiting")
 
 
 def serve():
